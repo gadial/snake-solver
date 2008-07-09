@@ -154,17 +154,16 @@ def not_legal(squares, cube_size=3)
 	return false 
 end
 
-def possible_signatures(size = 3)
+def each_possible_signature(size = 3)
 	#Three basic criterions for signatures of snakes that MIGHT become a size x size x size cube:
 	#1) Total number of squares = (size)^3
 	#2) All entries between 1 and size.
 	#3) No more than (size-2) consecutive 1 entries
 
-	def recurse(signatures,current_signature, n, size)
+	def recurse(current_signature, n, size)
 		raise "n is smaller than 0: #{n}" if n<0
 		if n==0
-			puts current_signature.inspect
-			return signatures << current_signature
+			yield(current_signature)
 		end
 		consecutive_ones_at_end=(current_signature.collect{|x| (x==1)?(1):(0)}.reverse.index(0)) || current_signature.length
 		start_from=(consecutive_ones_at_end<size-2)?(1):(2)
@@ -174,12 +173,13 @@ def possible_signatures(size = 3)
 		end
 	end
 
-	signatures=[]
-	recurse(signatures,[],size**3, size)
-	return signatures
+	recurse([],size**3, size)
 end
 
-# temp_signature=[3,2,1,2,1,3,2,1,2,3,1,2,1,3]
-# snake=PseudoSnake.new(temp_signature)
-# puts snake.assemble_snake.inspect
-t=possible_signatures
+possible_signatures
+
+# File.open ("signatures") do |file|
+#   temp_signature=file.readline
+#   snake=PseudoSnake.new(temp_signature.to_array)
+#   puts temp_signature if snake.assemble_snake != nil
+# end
