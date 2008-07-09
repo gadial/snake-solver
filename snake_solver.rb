@@ -22,10 +22,10 @@ class SnakeSquare
 	end
 end
 
+class Snake
 # a Snake's "signature" is a description of the snake when placed on 2d with the following
 # rule: for every square, it's next neighbor in the snake is either up to left
 # the signaure states exactly how many square are there in any row
-class Snake
 	attr_accessor :signature, :squares
 	def initialize(signature)
 		self.signature=signature
@@ -47,8 +47,6 @@ class Snake
 	end
 end
 
-#A snake represenation with minimal information and no spatial information
-#Used for solving only, not for display
 def on_same_line(coord1, coord2)
 #to be on the same line, exactly two coordinates have to match
 	coord_count=0
@@ -59,6 +57,8 @@ def on_same_line(coord1, coord2)
 end
 
 class PseudoSnake
+#A snake represenation with minimal information and no spatial information
+#Used for solving only, not for display
 	attr_accessor :signature, :squares
 	#there are two types of squares: joints and bridges.
 	#bridges join two squares on the same lines, joints do not.
@@ -154,6 +154,32 @@ def not_legal(squares, cube_size=3)
 	return false 
 end
 
+def possible_signatures(size = 3)
+	#Three basic criterions for signatures of snakes that MIGHT become a size x size x size cube:
+	#1) Total number of squares = (size)^3
+	#2) All entries between 1 and size.
+	#3) No more than (size-2) consecutive 1 entries
 
-snake=PseudoSnake.new($StandardSignature)
-puts snake.assemble_snake.inspect
+	def recurse(signatures,current_signature, n, size)
+		raise "n is smaller than 0: #{n}" if n<0
+		if n==0
+			puts current_signature.inspect
+			return signatures << current_signature
+		end
+		consecutive_ones_at_end=(current_signature.collect{|x| (x==1)?(1):(0)}.reverse.index(0)) || current_signature.length
+		start_from=(consecutive_ones_at_end<size-2)?(1):(2)
+		start_from.upto(size) do |i|
+			break if i>n
+			recurse(signatures, current_signature.dup << i, n-i,size)
+		end
+	end
+
+	signatures=[]
+	recurse(signatures,[],size**3, size)
+	return signatures
+end
+
+# temp_signature=[3,2,1,2,1,3,2,1,2,3,1,2,1,3]
+# snake=PseudoSnake.new(temp_signature)
+# puts snake.assemble_snake.inspect
+t=possible_signatures
