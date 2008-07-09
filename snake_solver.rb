@@ -84,7 +84,7 @@ class PseudoSnake
 		self.squares.inject(""){|string, square| string+square.inspect+"\n"}
 	end
 	
-	def assemble_snake
+	def assemble
           def recurse(current_direction,current_squares)
                   return current_squares if self.squares.length==current_squares.length
                   current_square_number=current_squares.length-1
@@ -97,7 +97,7 @@ class PseudoSnake
                           possible_directions.each do |direction|
                                   new_squares=current_squares.dup
                                   add_square(new_squares,direction)
-                                  next if (not_legal(current_squares))
+                                  next if (not_legal(new_squares))
                                   result=recurse(direction,new_squares)
                                   return result if result != nil
                           end
@@ -176,8 +176,10 @@ def each_possible_signature(size = 3)
 	recurse([],size**3, size)
 end
 
-possible_signatures
-
+#snake=PseudoSnake.new([1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2])
+snake=PseudoSnake.new([1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2])
+#puts snake.inspect
+puts snake.assemble.inspect
 # File.open ("signatures") do |file|
 #   temp_signature=file.readline
 #   snake=PseudoSnake.new(temp_signature.to_array)
